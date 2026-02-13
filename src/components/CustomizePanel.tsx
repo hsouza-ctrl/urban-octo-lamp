@@ -358,7 +358,7 @@ export default function CustomizePanel({ initialActiveIds, onClose }: CustomizeP
       </motion.div>
 
       {/* ── Inactive zone ── */}
-      <motion.div variants={itemVariants} transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}>
+      <motion.div className="customize-panel__inactive-wrap" variants={itemVariants} transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}>
       <div ref={inactiveZoneRef} className={inactiveClasses}>
         {inactiveIds.length === 0 ? (
           <p className="customize-panel__all-active">Drag here to remove from gameplay</p>

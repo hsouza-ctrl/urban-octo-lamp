@@ -40,6 +40,12 @@
   /* visual feedback handled by the drop placeholder shape */
 }
 
+/* ── Inactive zone wrapper — full width so drop area fills the screen ── */
+.customize-panel__inactive-wrap {
+  width: 100%;
+  align-self: stretch;
+}
+
 /* ── Inactive zone ── */
 .customize-panel__inactive {
   display: flex;
@@ -48,6 +54,7 @@
   gap: 24px;
   min-height: 72px;
   width: 100%;
+  min-width: 0;
   flex-wrap: wrap;
   padding: 12px;
   border-radius: 20px;
