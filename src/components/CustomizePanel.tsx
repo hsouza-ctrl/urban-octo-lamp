@@ -56,7 +56,7 @@ function StaticBalance() {
 const WIDGETS: WidgetDef[] = [
   { id: 'loyalty', label: 'Loyalty', size: 'circle', render: () => <StaticGemBadge pct={75} /> },
   { id: 'level', label: 'Level', size: 'circle', render: () => <PlayerLevel level={81} pct={75} /> },
-  { id: 'quest', label: 'Quest', size: 'circle', render: () => <QuestBadge value={0} pct={0} /> },
+  { id: 'quest', label: 'Quest', size: 'circle', render: () => <QuestBadge value={0} goal={250} pct={0} /> },
   { id: 'jackpot', label: 'Jackpot', size: 'circle', render: () => <JackpotBadge /> },
   { id: 'balance', label: 'Coin Balance', size: 'pill', render: () => <StaticBalance /> },
 ]

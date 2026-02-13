@@ -1,4 +1,4 @@
-/* ===== Quest badge — 40×40, contador igual ao level (mesmas cores) ===== */
+/* ===== Quest badge — 40×40, goal number at top, value in center ===== */
 .quest-badge {
   position: relative;
   width: 40px;
@@ -16,26 +16,22 @@
   background: #121212;
 }
 
+/* Number centered — same style as PlayerLevel */
 .quest-badge__number-wrap {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 40px;
-  height: 40px;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-weight: 600;
-  font-size: 11px;
-  font-style: normal;
-  line-height: 1;
-  color: #ffffff;
 }
 
 .quest-badge__number {
   margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
   line-height: 1;
+  color: #ffffff;
 }
 
 .quest-badge__trailing {
@@ -71,6 +67,7 @@
   height: 100%;
 }
 
+/* Badge on top — wider mask to fit goal number */
 .quest-badge__badge {
   position: absolute;
   left: 0;
@@ -83,7 +80,7 @@
 }
 
 .quest-badge__badge-mask {
-  width: 22.831px;
+  width: 28px;
   height: 7px;
   flex-shrink: 0;
 }
@@ -92,6 +89,33 @@
   display: block;
   width: 100%;
   height: 100%;
+}
+
+/* Icon + goal text side by side at top */
+.quest-badge__badge-content {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+
+.quest-badge__badge-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.quest-badge__badge-text {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 7px;
+  line-height: 1;
+  color: #b2b2b2;
+  letter-spacing: 0.02em;
 }
 
 /* Animated icon — position controlled by framer motion */

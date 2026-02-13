@@ -15,16 +15,16 @@ const BackButton: React.FC<BackButtonProps> = ({ onBack }) => {
 
   return (
     <button className="back-button" onClick={handleClick} aria-label="Voltar">
-      {/* Material Design arrow_back_ios */}
       <svg
         className="back-button__icon"
         width="24"
         height="24"
         viewBox="0 0 24 24"
+        fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M17.77 3.77L16 2 6 12l10 10 1.77-1.77L9.54 12z"
+          d="M20 13L7.83 13L13.42 18.59L12 20L4 12L12 4L13.41 5.41L7.83 11L20 11L20 13Z"
           fill="#B2B2B2"
         />
       </svg>
