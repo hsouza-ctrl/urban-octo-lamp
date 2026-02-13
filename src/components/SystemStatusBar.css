@@ -1,0 +1,55 @@
+.system-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  height: 100%;
+  padding-top: 4px;
+}
+
+.time {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.signal-icon,
+.wifi-icon,
+.battery-icon {
+  width: 18px;
+  height: 18px;
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+.signal-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.battery-icon {
+  width: 26px;
+  height: 13px;
+  opacity: 0.95;
+}
+
+@media (max-width: 768px) {
+  .system-status-bar {
+    font-size: 13px;
+  }
+  
+  .signal-icon,
+  .wifi-icon,
+  .battery-icon {
+    width: 14px;
+    height: 14px;
+  }
+}

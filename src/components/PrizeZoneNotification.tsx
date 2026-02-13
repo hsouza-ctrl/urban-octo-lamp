@@ -1,0 +1,21 @@
+import './PrizeZoneNotification.css'
+
+/* Trophy icon — user-provided */
+const TROPHY_PATH =
+  'M19 5H17V3H7V5H5C3.9 5 3 5.9 3 7V8C3 10.55 4.92 12.63 7.39 12.94C8.02 14.44 9.37 15.57 11 15.9V19H7V21H17V19H13V15.9C14.63 15.57 15.98 14.44 16.61 12.94C19.08 12.63 21 10.55 21 8V7C21 5.9 20.1 5 19 5ZM5 8V7H7V10.82C5.84 10.4 5 9.3 5 8ZM19 8C19 9.3 18.16 10.4 17 10.82V7H19V8Z'
+
+export default function PrizeZoneNotification() {
+  return (
+    <div className="prize-zone">
+      <div className="prize-zone__icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d={TROPHY_PATH} fill="#B2B2B2" />
+        </svg>
+      </div>
+      <div className="prize-zone__text">
+        <p className="prize-zone__label">PRIZE ZONE</p>
+        <p className="prize-zone__value">You're climbing the ranks</p>
+      </div>
+    </div>
+  )
+}

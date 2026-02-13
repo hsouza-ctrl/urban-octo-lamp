@@ -1,0 +1,38 @@
+/* ═══════════════════════════════════════════════
+   Animated Loyalty Upgrade — Topaz activation + gradient
+   ═══════════════════════════════════════════════ */
+
+/* Topaz gradient (balance update pill + ring): C7841A → FFE27B; empty ring #51310D */
+.als-root--topaz .als-ring__trailing {
+  border-color: #51310D;
+}
+
+.als-root--topaz .als-ring__progress {
+  background: conic-gradient(
+    from 0deg,
+    #FFE27B 0deg,
+    #C7841A var(--pct, 0deg),
+    transparent var(--pct, 0deg)
+  );
+  transform: scaleX(-1);
+}
+
+.als-root--topaz .als-ring__progress--flash {
+  animation: ring-flash-topaz 0.65s ease-out 2;
+}
+
+@keyframes ring-flash-topaz {
+  0%   { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+  50%  { filter: brightness(2) drop-shadow(0 0 10px rgba(255, 226, 123, 0.9)); }
+  100% { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+}
+
+/* New gem feedback: acende e apaga (igual ao outro fluxo), sem glow */
+.alu-topaz-activate img {
+  animation: gem-blink 0.55s ease-in-out 0.4s 5;
+}
+
+@keyframes gem-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.15; }
+}

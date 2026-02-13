@@ -1,0 +1,179 @@
+/* ═══════════════════════════════════════════════
+   Animated Level Up — same Dynamic Island pattern
+   ═══════════════════════════════════════════════ */
+
+.alu-root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+.alu-island {
+  position: relative;
+  height: 40px;
+  width: 40px;
+  min-width: 40px;
+  border-radius: 20px;
+  background: #121212;
+  overflow: visible;
+  will-change: width;
+}
+
+.alu-island__clip {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.alu-island__border {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  border: 1px solid rgba(160, 160, 160, 0.5);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ── Ring (stages 1-2) ── */
+.alu-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+}
+
+.alu-ring__trailing {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  border: 2px solid #3a3a3a;
+  box-sizing: border-box;
+}
+
+.alu-ring__progress {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 2px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 2px)
+  );
+  background: conic-gradient(
+    from 0deg,
+    #fbfbfb 0deg,
+    #6b6b6b var(--pct, 0deg),
+    transparent var(--pct, 0deg)
+  );
+  transform: scaleX(-1);
+}
+
+/* Flash at 100% — white glow */
+.alu-ring__progress--flash {
+  animation: level-ring-flash 0.65s ease-out 2;
+}
+@keyframes level-ring-flash {
+  0%   { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+  50%  { filter: brightness(2) drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); }
+  100% { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+}
+
+/* ── Level number (centered, stages 1-2) ── */
+.alu-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  color: #ffffff;
+}
+
+/* ── Arrow icon (persistent anchor, stages 3+) ── */
+.alu-arrow {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Expanded text (stage 4) — hug content ── */
+.alu-text {
+  position: absolute;
+  left: 40px;
+  right: auto;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 16px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  width: max-content;
+}
+
+.alu-text__label {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 16px;
+  text-transform: uppercase;
+  color: #a0a0a0;
+}
+
+.alu-text__value {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+}
+
+/* ── LVL badge (outside clip, stages 1-2) ── */
+.alu-badge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.alu-badge__mask {
+  width: 22.831px;
+  height: 7px;
+  flex-shrink: 0;
+}
+
+.alu-badge__text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -4px;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 7px;
+  line-height: normal;
+  text-align: center;
+  color: #b2b2b2;
+}

@@ -1,0 +1,219 @@
+/* ═══════════════════════════════════════════════
+   Animated Loyalty Status — Dynamic Island style
+   Persistent gem, morphing container
+   ═══════════════════════════════════════════════ */
+
+.als-root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+/* ── Morphing island ── */
+.als-island {
+  position: relative;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 20px;
+  background: #121212;
+  overflow: visible; /* badge sits above */
+  will-change: width;
+}
+
+/* Clipped inner — hides content during morph */
+.als-island__clip {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Border — only visible for stages 3+ */
+.als-island__border {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  border: 1px solid rgba(160, 160, 160, 0.5);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ── Ring layer (stages 1-2) ── */
+.als-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+}
+
+.als-ring__trailing {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  border: 2px solid #39165b;
+  box-sizing: border-box;
+}
+
+.als-ring__progress {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 2px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 2px)
+  );
+  background: conic-gradient(
+    from 0deg,
+    #f799ff 0deg,
+    #7d18ba var(--pct, 270deg),
+    transparent var(--pct, 270deg)
+  );
+  transform: scaleX(-1);
+}
+
+/* Flash at 100% */
+.als-ring__progress--flash {
+  animation: ring-flash 0.65s ease-out 2;
+}
+@keyframes ring-flash {
+  0%   { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+  50%  { filter: brightness(2) drop-shadow(0 0 10px rgba(247, 153, 255, 1)); }
+  100% { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+}
+
+/* ── Persistent gem — fixed at left:8, never moves ── */
+.als-gem {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+}
+
+.als-gem__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Flash the gem when ring reaches 100% */
+.als-gem--flash .als-gem__img {
+  animation: gem-icon-flash 0.65s ease-out 2;
+}
+@keyframes gem-icon-flash {
+  0%   { filter: brightness(1); }
+  50%  { filter: brightness(1.6) drop-shadow(0 0 8px rgba(168, 85, 247, 0.9)); }
+  100% { filter: brightness(1); }
+}
+
+/* ── Badge (% label) — sits OUTSIDE clip ── */
+.als-badge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.als-badge__mask {
+  width: 22.831px;
+  height: 7px;
+  flex-shrink: 0;
+}
+
+.als-badge__text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -5px;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 8px;
+  line-height: normal;
+  text-align: center;
+  color: #b2b2b2;
+}
+
+/* ── Expanded text (stage 4) ── */
+.als-text {
+  position: absolute;
+  left: 40px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 16px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.als-text__label {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 16px;
+  text-transform: uppercase;
+  color: #a0a0a0;
+}
+
+.als-text__value {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+}
+
+/* ── Extra gems (stage 6) ── */
+.als-extra {
+  position: absolute;
+  left: 40px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.als-extra__slot {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.als-extra__slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.als-extra__slot--dim {
+  opacity: 0.25;
+}
+
+/* New gem feedback: acende e apaga (igual ao fluxo que acendia/apagava), sem glow */
+.als-extra__slot--blink img {
+  animation: gem-blink 0.55s ease-in-out 5;
+}
+
+@keyframes gem-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.15; }
+}

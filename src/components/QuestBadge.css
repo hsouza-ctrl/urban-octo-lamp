@@ -1,0 +1,110 @@
+/* ===== Quest badge — 40×40, contador igual ao level (mesmas cores) ===== */
+.quest-badge {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.quest-badge__bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: #121212;
+}
+
+.quest-badge__number-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.quest-badge__number {
+  margin: 0;
+  line-height: 1;
+}
+
+.quest-badge__trailing {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  border: 2px solid #3a3a3a;
+  box-sizing: border-box;
+}
+
+.quest-badge__progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  -webkit-mask-image: conic-gradient(from 0deg, black var(--pct-deg, 0deg), transparent var(--pct-deg, 0deg));
+  mask-image: conic-gradient(from 0deg, black var(--pct-deg, 0deg), transparent var(--pct-deg, 0deg));
+  transform: scaleX(-1);
+}
+
+.quest-badge__progress-inner {
+  position: absolute;
+  inset: 6.7% 0 0 0;
+}
+
+.quest-badge__progress-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.quest-badge__badge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.quest-badge__badge-mask {
+  width: 22.831px;
+  height: 7px;
+  flex-shrink: 0;
+}
+
+.quest-badge__badge-mask-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Animated icon — position controlled by framer motion */
+.quest-badge__animated-icon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+}
+
+.quest-badge__animated-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

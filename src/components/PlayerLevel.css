@@ -1,0 +1,117 @@
+/* ===== Level badge — 40×40 ===== */
+.level {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+/* Dark circle background */
+.level__bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: #121212;
+}
+
+/* Number centered */
+.level__number-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  font-style: normal;
+  line-height: 0;
+  color: #ffffff;
+}
+
+.level__number {
+  margin: 0;
+  line-height: normal;
+  white-space: pre-wrap;
+}
+
+/* Trailing grey ring */
+.level__trailing {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  border: 2px solid #3a3a3a;
+  box-sizing: border-box;
+}
+
+/* Progress ring */
+.level__progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  -webkit-mask-image: conic-gradient(from 0deg, black var(--pct-deg, 0deg), transparent var(--pct-deg, 0deg));
+  mask-image: conic-gradient(from 0deg, black var(--pct-deg, 0deg), transparent var(--pct-deg, 0deg));
+  transform: scaleX(-1);
+}
+
+.level__progress-inner {
+  position: absolute;
+  inset: 6.7% 0 0 0;
+}
+
+.level__progress-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Badge on top — centered on the 40px circle */
+.level__badge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.level__badge-mask {
+  width: 22.831px;
+  height: 7px;
+  flex-shrink: 0;
+}
+
+.level__badge-mask-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.level__badge-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -4px;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 7px;
+  line-height: normal;
+  font-style: normal;
+  text-align: center;
+  color: #b2b2b2;
+}

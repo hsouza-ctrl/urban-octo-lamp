@@ -1,0 +1,14 @@
+.app {
+  width: min(375px, 100vw);
+  min-height: 100vh;
+  position: relative;
+}
+
+.app--preview {
+  background: #000000 url('/figma/game-bg.png') center top / cover no-repeat;
+}
+
+.game-content {
+  padding-top: 111px; /* 47 (status bar) + 64 (top bar) */
+  min-height: calc(100vh - 111px);
+}
