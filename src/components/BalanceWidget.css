@@ -34,12 +34,12 @@
   white-space: nowrap;
 }
 
-/* +3000 badge */
+/* +3000 badge — horizontally centered on the right edge of the widget */
 .balance__bonus {
   position: absolute;
-  top: -6px;
-  right: -16px;
-  padding: 2px 8px;
+  top: -4px;
+  right: 0;
+  padding: 2px 2px;
   background: linear-gradient(135deg, #FFE27A 0%, #F5C842 30%, #D4A017 70%, #C8962E 100%);
   border-radius: 10px;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;

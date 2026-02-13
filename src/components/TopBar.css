@@ -85,6 +85,31 @@
   padding-top: 6px;
 }
 
+/* Scrollable badges — only in customize flow */
+.topbar__badges--scrollable {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE/Edge */
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar__badges--scrollable::-webkit-scrollbar {
+  display: none;                  /* Chrome/Safari */
+}
+
+.topbar__badges--scrollable > * {
+  flex-shrink: 0;
+}
+
+/* Left fade — only when scrolled */
+.topbar__badges--scrolled {
+  mask-image: linear-gradient(to right, transparent 0px, black 24px, black 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0px, black 24px, black 100%);
+}
+
 .topbar__quest-badges {
   display: flex;
   align-items: center;

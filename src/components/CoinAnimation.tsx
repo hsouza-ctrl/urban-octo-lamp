@@ -28,7 +28,7 @@ export default function CoinAnimation({
 }: CoinAnimationProps) {
   /* Generate random scatter positions for each coin (stable across renders) */
   const coins = useMemo(() => {
-    if (!sourceRect || !targetRect) return []
+    if (!sourceRect || !targetRect || !active) return []
     const sx = sourceRect.left + sourceRect.width / 2
     const sy = sourceRect.top + sourceRect.height / 2
     const tx = targetRect.left + targetRect.width / 2
@@ -51,8 +51,7 @@ export default function CoinAnimation({
         flyDelay: i * 0.07,
       }
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, count])
+  }, [active, count, sourceRect, targetRect])
 
   if (!active || coins.length === 0) return null
 

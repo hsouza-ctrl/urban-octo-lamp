@@ -92,16 +92,30 @@ function CloseIcon() {
    CustomizePanel
    ═══════════════════════════════════════════════ */
 
-interface CustomizePanelProps {
-  onClose?: () => void
+const ALL_WIDGET_IDS = WIDGETS.map((w) => w.id)
+const DEFAULT_ACTIVE_IDS = ['loyalty', 'level']
+
+function getInitialActive(initialActiveIds: string[] | undefined): string[] {
+  if (!initialActiveIds?.length) return DEFAULT_ACTIVE_IDS
+  const valid = initialActiveIds.filter((id) => ALL_WIDGET_IDS.includes(id))
+  return valid.length > 0 ? valid : DEFAULT_ACTIVE_IDS
 }
 
-export default function CustomizePanel({ onClose }: CustomizePanelProps) {
-  const [activeIds, setActiveIds] = useState<string[]>(['loyalty', 'level'])
-  const [inactiveIds, setInactiveIds] = useState<string[]>(['jackpot', 'balance', 'quest'])
+interface CustomizePanelProps {
+  initialActiveIds?: string[]
+  onClose?: (activeIds: string[]) => void
+}
+
+export default function CustomizePanel({ initialActiveIds, onClose }: CustomizePanelProps) {
+  const [activeIds, setActiveIds] = useState<string[]>(() => getInitialActive(initialActiveIds))
+  const [inactiveIds, setInactiveIds] = useState<string[]>(() => {
+    const active = getInitialActive(initialActiveIds)
+    return ALL_WIDGET_IDS.filter((id) => !active.includes(id))
+  })
   const [dragOverZone, setDragOverZone] = useState<'active' | 'inactive' | null>(null)
   const [draggingId, setDraggingId] = useState<string | null>(null)
   const [draggingFromZone, setDraggingFromZone] = useState<'active' | 'inactive' | null>(null)
+  const [dropIndex, setDropIndex] = useState<number>(0)
 
   const activeZoneRef = useRef<HTMLDivElement>(null)
   const inactiveZoneRef = useRef<HTMLDivElement>(null)
@@ -130,13 +144,19 @@ export default function CustomizePanel({ onClose }: CustomizePanelProps) {
   )
 
   /* ── Move widget between zones ── */
-  const moveToActive = useCallback(
-    (id: string) => {
-      setInactiveIds((prev) => prev.filter((i) => i !== id))
+  const moveToActive = useCallback((id: string, atIndex?: number) => {
+    setInactiveIds((prev) => prev.filter((i) => i !== id))
+    if (atIndex !== undefined) {
+      setActiveIds((prev) => [...prev.slice(0, atIndex), id, ...prev.slice(atIndex)])
+    } else {
       setActiveIds((prev) => [...prev, id])
-    },
-    [],
-  )
+    }
+  }, [])
+
+  const insertIntoActiveAt = useCallback((id: string, index: number) => {
+    setInactiveIds((prev) => prev.filter((i) => i !== id))
+    setActiveIds((prev) => [...prev.slice(0, index), id, ...prev.slice(index)])
+  }, [])
 
   const moveToInactive = useCallback(
     (id: string) => {
@@ -153,6 +173,24 @@ export default function CustomizePanel({ onClose }: CustomizePanelProps) {
         const point = info.point
         const zone = getZoneAtPoint(point, sourceZone)
         setDragOverZone(zone)
+        if (zone === 'active' && sourceZone === 'inactive' && activeZoneRef.current) {
+          const container = activeZoneRef.current
+          const items = Array.from(container.children).filter(
+            (el) => !(el as HTMLElement).hasAttribute('data-placeholder')
+          )
+          if (items.length === 0) {
+            setDropIndex(0)
+            return
+          }
+          for (let i = 0; i < items.length; i++) {
+            const rect = items[i].getBoundingClientRect()
+            if (point.x < rect.left + rect.width / 2) {
+              setDropIndex(i)
+              return
+            }
+          }
+          setDropIndex(items.length)
+        }
       },
     [getZoneAtPoint],
   )
@@ -171,15 +209,16 @@ export default function CustomizePanel({ onClose }: CustomizePanelProps) {
         const point = info.point
         const zone = getZoneAtPoint(point, sourceZone)
         if (zone === 'active' && sourceZone === 'inactive') {
-          moveToActive(id)
+          insertIntoActiveAt(id, dropIndex)
         } else if (zone === 'inactive' && sourceZone === 'active') {
           moveToInactive(id)
         }
         setDragOverZone(null)
         setDraggingId(null)
         setDraggingFromZone(null)
+        setDropIndex(0)
       },
-    [getZoneAtPoint, moveToActive, moveToInactive],
+    [getZoneAtPoint, insertIntoActiveAt, moveToInactive, dropIndex],
   )
 
   /* ── Render an active draggable widget (reorderable) ── */
@@ -235,7 +274,13 @@ export default function CustomizePanel({ onClose }: CustomizePanelProps) {
 
   /* ── Determine if we should show a drop placeholder in the active zone ── */
   const showDropPlaceholder = dragOverZone === 'active' && draggingFromZone === 'inactive' && draggingId
-  const placeholderSize = showDropPlaceholder ? getWidgetDef(draggingId).size : null
+  const placeholderSize = showDropPlaceholder ? getWidgetDef(draggingId!).size : null
+  const activeValues = showDropPlaceholder
+    ? [...activeIds.slice(0, dropIndex), '__placeholder__', ...activeIds.slice(dropIndex)]
+    : activeIds
+  const handleReorder = useCallback((newOrder: string[]) => {
+    setActiveIds(newOrder.filter((id) => id !== '__placeholder__'))
+  }, [])
 
   const activeClasses = [
     'customize-panel__active-zone',
@@ -251,41 +296,72 @@ export default function CustomizePanel({ onClose }: CustomizePanelProps) {
     .filter(Boolean)
     .join(' ')
 
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: 0.05, delayChildren: 0.12 },
+    },
+  }
+  const itemVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+  }
+
   return (
-    <div className="customize-panel">
+    <motion.div
+      className="customize-panel"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* ── Active zone (reorderable) ── */}
+      <motion.div variants={itemVariants} transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}>
       <Reorder.Group
         axis="x"
-        values={activeIds}
-        onReorder={setActiveIds}
+        values={activeValues}
+        onReorder={handleReorder}
         ref={activeZoneRef}
         className={activeClasses}
         as="div"
       >
         {activeIds.length === 0 && !showDropPlaceholder ? (
-          <p className="customize-panel__no-active">No active widgets</p>
+          <p className="customize-panel__no-active">Drag here to pin</p>
         ) : (
-          activeIds.map((id) => renderActiveDraggable(id))
-        )}
-        {showDropPlaceholder && (
-          <motion.div
-            className={`customize-panel__drop-placeholder customize-panel__drop-placeholder--${placeholderSize}`}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
-          >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-              <path d="M6 1V11M1 6H11" stroke="#7B61FF" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          </motion.div>
+          activeValues.map((v) =>
+            v === '__placeholder__' ? (
+              <Reorder.Item
+                key="__placeholder__"
+                value="__placeholder__"
+                drag={false}
+                data-placeholder
+                as="div"
+                className={`customize-panel__drop-placeholder customize-panel__drop-placeholder--${placeholderSize}`}
+                style={{ cursor: 'default' }}
+              >
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+                    <path d="M6 1V11M1 6H11" stroke="#7B61FF" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                </motion.span>
+              </Reorder.Item>
+            ) : (
+              renderActiveDraggable(v)
+            )
+          )
         )}
       </Reorder.Group>
+      </motion.div>
 
       {/* ── Inactive zone ── */}
+      <motion.div variants={itemVariants} transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}>
       <div ref={inactiveZoneRef} className={inactiveClasses}>
         {inactiveIds.length === 0 ? (
-          <p className="customize-panel__all-active">All widgets are active</p>
+          <p className="customize-panel__all-active">Drag here to remove from gameplay</p>
         ) : (
           inactiveIds.map((id) => {
             const def = getWidgetDef(id)
@@ -298,25 +374,30 @@ export default function CustomizePanel({ onClose }: CustomizePanelProps) {
           })
         )}
       </div>
+      </motion.div>
 
       {/* ── Hint ── */}
+      <motion.div variants={itemVariants} transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}>
       <div className="customize-panel__hint">
         <DragHintIcon />
         <p className="customize-panel__hint-text">
           Drag the widgets to set their order and choose which ones appear during gameplay.
         </p>
       </div>
+      </motion.div>
 
       {/* ── Close button ── */}
-      <motion.button
-        type="button"
-        className="customize-panel__close"
-        onClick={onClose}
-        whileTap={{ scale: 0.92 }}
-        aria-label="Close customization"
-      >
-        <CloseIcon />
-      </motion.button>
-    </div>
+      <motion.div variants={itemVariants} transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}>
+        <motion.button
+          type="button"
+          className="customize-panel__close"
+          onClick={() => onClose?.(activeIds)}
+          whileTap={{ scale: 0.92 }}
+          aria-label="Close customization"
+        >
+          <CloseIcon />
+        </motion.button>
+      </motion.div>
+    </motion.div>
   )
 }

@@ -17,6 +17,7 @@ import QuestBadge from './QuestBadge'
 import PrizeZoneNotification from './PrizeZoneNotification'
 import CoinAnimation from './CoinAnimation'
 import LoyaltyTakeover from './LoyaltyTakeover'
+import JackpotBadge from './JackpotBadge'
 import CustomizePanel from './CustomizePanel'
 import './TopBar.css'
 
@@ -57,15 +58,49 @@ export default function TopBar({
 
   /* ── Customize panel state ── */
   const [customizeOpen, setCustomizeOpen] = useState(false)
+  const [customizedIds, setCustomizedIds] = useState<string[] | null>(null)
 
+  /* Reset state when entering/leaving the customize flow */
   useEffect(() => {
-    if (!isCustomize) { setCustomizeOpen(false); return }
-    const t = setTimeout(() => setCustomizeOpen(true), 500)
-    return () => clearTimeout(t)
+    if (!isCustomize) {
+      setCustomizeOpen(false)
+      setCustomizedIds(null)
+    }
   }, [isCustomize])
 
   const openCustomize = useCallback(() => setCustomizeOpen(true), [])
-  const closeCustomize = useCallback(() => setCustomizeOpen(false), [])
+
+  /* ── Horizontal scroll with mouse wheel + left fade on badges area ── */
+  const badgesRef = useRef<HTMLDivElement>(null)
+  const [badgesScrolled, setBadgesScrolled] = useState(false)
+
+  useEffect(() => {
+    const el = badgesRef.current
+    if (!el) return
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) > 0) {
+        e.preventDefault()
+        el.scrollLeft += e.deltaY
+      }
+    }
+    const onScroll = () => {
+      setBadgesScrolled(el.scrollLeft > 2)
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+      el.removeEventListener('scroll', onScroll)
+    }
+  })
+
+  const handleCustomizeClose = useCallback(
+    (activeIds: string[]) => {
+      setCustomizedIds(activeIds)
+      setCustomizeOpen(false)
+    },
+    []
+  )
 
   /* ── Quest Offer phases ── */
   // 'default' = loyalty+level+quest counter+plus; 'offer' = quest widget; 'confirmed' = success; 'transition' = transition badge; 'outro' = dismiss
@@ -170,12 +205,23 @@ export default function TopBar({
       : isLevel && levelStage >= 6 && levelStage <= 8
   const showCoins = coinStageActive
 
-  /* ── Snapshot positions for coin animation ── */
+  /* ── Reset rects when leaving coin stage so next run captures fresh ── */
   useEffect(() => {
-    if (coinStageActive) {
+    if (!coinStageActive) {
+      setSourceRect(null)
+      setTargetRect(null)
+    }
+  }, [coinStageActive])
+
+  /* ── Snapshot positions for coin animation (after layout so first run has rects) ── */
+  useEffect(() => {
+    if (!coinStageActive) return
+    const capture = () => {
       if (sourceRef.current) setSourceRect(sourceRef.current.getBoundingClientRect())
       if (balanceRef.current) setTargetRect(balanceRef.current.getBoundingClientRect())
     }
+    const id = requestAnimationFrame(() => requestAnimationFrame(capture))
+    return () => cancelAnimationFrame(id)
   }, [coinStageActive])
 
   /* ── Animate balance counter ── */
@@ -212,11 +258,51 @@ export default function TopBar({
         <SystemStatusBar />
       </div>
 
-      {!customizeOpen && !isCustomize && (
+      {!customizeOpen && (
       <div className="topbar__ingame">
         <BackButton onBack={onBack} />
 
-        <div className="topbar__badges">
+        <div
+          className={`topbar__badges${isCustomize ? ' topbar__badges--scrollable' : ''}${isCustomize && badgesScrolled ? ' topbar__badges--scrolled' : ''}`}
+          ref={isCustomize ? badgesRef : undefined}
+        >
+          {/* ═══ CUSTOMIZE FLOW — default or customized badges ═══ */}
+          {isCustomize && (
+            customizedIds ? (
+              <>
+                {customizedIds.map((id) => {
+                  switch (id) {
+                    case 'loyalty':
+                      return <StaticGemBadge key={id} pct={75} />
+                    case 'level':
+                      return <PlayerLevel key={id} level={playerLevel} pct={75} />
+                    case 'quest':
+                      return <QuestBadge key={id} value={0} goal={250} pct={0} />
+                    case 'jackpot':
+                      return <JackpotBadge key={id} />
+                    case 'balance':
+                      return (
+                        <BalanceWidget
+                          key={id}
+                          visible
+                          value={BASE_BALANCE}
+                        />
+                      )
+                    default:
+                      return null
+                  }
+                })}
+                <AddIconButton onClick={openCustomize} />
+              </>
+            ) : (
+              <>
+                <StaticGemBadge pct={75} />
+                <PlayerLevel level={playerLevel} pct={75} />
+                <AddIconButton onClick={openCustomize} />
+              </>
+            )
+          )}
+
           {/* ═══ QUEST OFFER — default badges or quest widget ═══ */}
           {isQuestOffer && questDefault && (
             questPhase === 'outro' ? (
@@ -412,9 +498,7 @@ export default function TopBar({
             </>
           )}
 
-          {/* customize flow hides the entire ingame row */}
-
-          {/* ═══ Add icon — only in default view (both icons on screen) ═══ */}
+          {/* ═══ Add icon — only in animated flows (both icons on screen) ═══ */}
           {showAddIcon && !isCustomize && (
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
@@ -441,14 +525,17 @@ export default function TopBar({
       )}
 
       {/* ═══ CUSTOMIZE PANEL ═══ */}
-      {(isCustomize || customizeOpen) && (
+      {customizeOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -40 }}
-          animate={customizeOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: -40 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-          style={{ pointerEvents: customizeOpen ? 'auto' : 'none' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
         >
-          <CustomizePanel onClose={isCustomize ? onBack : closeCustomize} />
+          <CustomizePanel
+            initialActiveIds={customizedIds ?? undefined}
+            onClose={handleCustomizeClose}
+          />
         </motion.div>
       )}
 

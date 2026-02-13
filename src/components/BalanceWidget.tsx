@@ -44,11 +44,11 @@ const BalanceWidget = forwardRef<HTMLDivElement, BalanceWidgetProps>(
         {bonus !== null && (
           <motion.div
             className="balance__bonus"
-            initial={{ opacity: 0, scale: 0.5, y: 4 }}
+            initial={{ opacity: 0, scale: 0.5, y: 4, x: '75%' }}
             animate={
               showBonus
-                ? { opacity: 1, scale: 1, y: 0 }
-                : { opacity: 0, scale: 0.5, y: 4 }
+                ? { opacity: 1, scale: 1, y: 0, x: '75%' }
+                : { opacity: 0, scale: 0.5, y: 4, x: '75%' }
             }
             transition={{ type: 'spring', stiffness: 500, damping: 22 }}
           >
