@@ -24,7 +24,6 @@ export default function AnimationPicker({ onSelect }: AnimationPickerProps) {
             <span className="picker__item-icon">{anim.icon}</span>
             <div className="picker__item-info">
               <span className="picker__item-name">{anim.name}</span>
-              <span className="picker__item-desc">{anim.description}</span>
             </div>
             <svg className="picker__item-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M9 6l6 6-6 6" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

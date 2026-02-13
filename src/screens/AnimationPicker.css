@@ -78,16 +78,6 @@
   color: #fff;
 }
 
-.picker__item-desc {
-  font-size: 12px;
-  font-weight: 400;
-  color: #888;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 
 .picker__item-arrow {
   flex-shrink: 0;
