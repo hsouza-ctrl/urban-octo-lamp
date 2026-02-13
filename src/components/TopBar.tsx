@@ -94,6 +94,16 @@ export default function TopBar({
     }
   })
 
+  /* When badge list changes (e.g. one removed), reset scroll so first badge isn’t behind fade */
+  useEffect(() => {
+    if (!isCustomize) return
+    const el = badgesRef.current
+    if (el) {
+      el.scrollLeft = 0
+      setBadgesScrolled(false)
+    }
+  }, [isCustomize, customizedIds])
+
   const handleCustomizeClose = useCallback(
     (activeIds: string[]) => {
       setCustomizedIds(activeIds)
